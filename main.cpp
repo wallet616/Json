@@ -6,7 +6,14 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    Node a;
+    NodeTest node_test;
+    node_test.run_test();
+    
+    
+    
+    
+    /*
+    Node a, b;
 
     a.add(Json_char{ "dasd", "dasaaasdasdasda" });
     // cout << "jed" << endl;
@@ -29,7 +36,7 @@ int main(int argc, char** argv)
     long dad;
     cout << "key: " << a.findKey("aa", dad) << endl;
     cout << "key: " << dad << endl;
+    */
 
-    printf("hello world\n");
     return 0;
 }

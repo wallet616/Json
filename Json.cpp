@@ -1,6 +1,283 @@
 #include "Json.h"
 #include <iostream>
 
+//
+// Node
+//
+Node::Node()
+{
+    this->key = (char*)"root";
+
+    this->json_char_ammount = 0;
+    this->json_char_list = 0x0;
+
+    this->json_long_ammount = 0;
+    this->json_long_list = 0x0;
+
+    this->json_bool_ammount = 0;
+    this->json_bool_list = 0x0;
+}
+
+Node::Node(const char* key)
+{
+    this->key = charDuplicate(key);
+
+    this->json_char_ammount = 0;
+    this->json_char_list = 0x0;
+
+    this->json_long_ammount = 0;
+    this->json_long_list = 0x0;
+
+    this->json_bool_ammount = 0;
+    this->json_bool_list = 0x0;
+}
+
+Node::~Node()
+{
+    delete[] this->key;
+
+    for(long i = 0; i < this->json_char_ammount; i++) {
+        delete this->json_char_list[i];
+    }
+    delete[] this->json_char_list;
+
+    for(long i = 0; i < this->json_long_ammount; i++) {
+        delete this->json_long_list[i];
+    }
+    delete[] this->json_long_list;
+
+    for(long i = 0; i < this->json_bool_ammount; i++) {
+        delete this->json_bool_list[i];
+    }
+    delete[] this->json_bool_list;
+}
+
+// Methods
+enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table) const {
+    if(charIsEqual(this->key, key)) {
+        assigns_id_from_table = -1;
+        return NODE;
+    }
+
+    for(long i = 0; i < this->json_long_ammount; i++) {
+        if(charIsEqual(key, this->json_long_list[i]->key)) {
+            assigns_id_from_table = i;
+            return LONG;
+        }
+    }
+
+    for(long i = 0; i < this->json_bool_ammount; i++) {
+        if(charIsEqual(key, this->json_bool_list[i]->key)) {
+            assigns_id_from_table = i;
+            return BOOL;
+        }
+    }
+
+    for(long i = 0; i < this->json_char_ammount; i++) {
+        if(charIsEqual(key, this->json_char_list[i]->key)) {
+            assigns_id_from_table = i;
+            return CHAR;
+        }
+    }
+
+    return NOT_EXIST;
+}
+
+// Static char*
+char* Node::charDuplicate(const char* key)
+{
+    long newSize = 0;
+    while(key[newSize] != '\0')
+        newSize++;
+    newSize += 1;
+
+    char* newTable = new char[newSize];
+    for(long i = 0; i < newSize; i++)
+        newTable[i] = key[i];
+
+    return newTable;
+}
+
+bool Node::charIsEqual(const char* keyOne, const char* keyTwo)
+{
+    long c1 = 0;
+    while(keyOne[c1] != '\0')
+        c1++;
+
+    long c2 = 0;
+    while(keyTwo[c2] != '\0')
+        c2++;
+
+    if(c1 != c2)
+        return false;
+    else {
+        c1 += 1;
+        for(long i = 0; i < c1; i++)
+            if(keyOne[i] != keyTwo[i])
+                return false;
+    }
+
+    return true;
+}
+
+bool Node::charIsGreater(const char* keyOne, const char* keyTwo)
+{
+    long c1 = 0;
+    while(keyOne[c1] != '\0')
+        c1++;
+
+    long c2 = 0;
+    while(keyTwo[c2] != '\0')
+        c2++;
+
+    long c = (c1 > c2) ? c2 + 1 : c1 + 1;
+    for(long i = 0; i < c; i++)
+        if(keyOne[i] > keyTwo[i])
+            return true;
+        else if(keyOne[i] < keyTwo[i])
+            return false;
+        else
+            continue;
+
+    return false;
+}
+
+//
+// Node test
+//
+void NodeTest::run_test()
+{
+    std::cout << "Node tests:" << std::endl;
+
+    /// Static char* tests:
+    std::cout << "> Static char* tests:" << std::endl;
+
+    std::cout << " * static char* charDuplicate(const char* key):" << std::endl;
+    {
+        long fails = 0;
+
+        char* str1 = (char*)"qwerty 123";
+        char* str2 = (char*)"";
+        char* str3;
+
+        str3 = charDuplicate(str1);
+
+        long c1 = 0;
+        while(str3[c1] != '\0')
+            c1++;
+        long c2 = 0;
+        while(str3[c2] != '\0')
+            c2++;
+
+        if(c1 != c2)
+            fails++;
+        else
+            for(long i = 0; i < c1 + 1; i++)
+                if(str1[i] != str3[i])
+                    fails++;
+
+        delete str3;
+        str3 = charDuplicate(str1);
+        if(&str1 == &str3)
+            fails++;
+
+        delete str3;
+        str3 = charDuplicate(str2);
+        if(&str2 == &str3)
+            fails++;
+
+        delete str1;
+        delete str2;
+        delete str3;
+
+        if(fails == 0)
+            std::cout << "      succes" << std::endl;
+        else
+            std::cout << "      failed" << std::endl;
+    }
+
+    std::cout << " * static bool charIsEqual(const char* keyOne, const char* keyTwo):" << std::endl;
+    {
+        long fails = 0;
+
+        char* str1 = (char*)"qwerty 123";
+        char* str2 = (char*)"";
+        char* str3;
+
+        if(charIsEqual(str1, str1) == false)
+            fails++;
+
+        if(charIsEqual(str2, str2) == false)
+            fails++;
+
+        if(charIsEqual(str1, str2) == true)
+            fails++;
+
+        str3 = charDuplicate(str1);
+        if(charIsEqual(str1, str3) == false)
+            fails++;
+
+        delete str3;
+        str3 = charDuplicate(str2);
+        if(charIsEqual(str3, str2) == false)
+            fails++;
+
+        delete str1;
+        delete str2;
+        delete str3;
+
+        if(fails == 0)
+            std::cout << "      succes" << std::endl;
+        else
+            std::cout << "      failed" << std::endl;
+    }
+
+    std::cout << " * static bool charIsGreater(const char* keyOne, const char* keyTwo):" << std::endl;
+    {
+        long fails = 0;
+
+        char* str1 = (char*)"qwerty 123";
+        char* str2 = (char*)"qwerty 123 ";
+        char* str3 = (char*)"qWerty 123 ";
+        char* str4 = (char*)"";
+
+        if(charIsGreater(str1, str1) == true)
+            fails++;
+
+        if(charIsGreater(str4, str4) == true)
+            fails++;
+
+        if(charIsGreater(str1, str2) == true)
+            fails++;
+
+        if(charIsGreater(str2, str1) == false)
+            fails++;
+
+        if(charIsGreater(str1, str4) == false)
+            fails++;
+
+        if(charIsGreater(str4, str1) == true)
+            fails++;
+
+        if(charIsGreater(str2, str3) == false)
+            fails++;
+
+        if(charIsGreater(str3, str2) == true)
+            fails++;
+
+        delete str1;
+        delete str2;
+        delete str3;
+        delete str4;
+
+        if(fails == 0)
+            std::cout << "      succes" << std::endl;
+        else
+            std::cout << "      failed" << std::endl;
+    }
+}
+
+/*
 enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table) const
 {
     if(this->key == key) {
@@ -21,12 +298,14 @@ enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table)
             return LONG;
         }
     }
+
     for(long i = 0; i < this->json_bool_ammount; i++) {
         if(key == this->json_bool_list[i]->key) {
             assigns_id_from_table = i;
             return BOOL;
         }
     }
+
     for(long i = 0; i < this->json_char_ammount; i++) {
         if(key == this->json_char_list[i]->key) {
             assigns_id_from_table = i;
@@ -212,6 +491,18 @@ bool Node::add(const Node& node)
         new_nodes_list[found_id] = new Node();
         new_nodes_list[found_id]->key = node.key;
 
+        new_nodes_list[found_id]->json_char_ammount = node.json_char_ammount;
+        new_nodes_list[found_id]->json_char_list = node.json_char_list;
+
+        new_nodes_list[found_id]->json_long_ammount = node.json_long_ammount;
+        new_nodes_list[found_id]->json_long_list = node.json_long_list;
+
+        new_nodes_list[found_id]->json_bool_ammount = node.json_bool_ammount;
+        new_nodes_list[found_id]->json_bool_list = node.json_bool_list;
+
+        new_nodes_list[found_id]->nodes_ammount = node.nodes_ammount;
+        new_nodes_list[found_id]->nodes_list = node.nodes_list;
+
         // new_nodes_list[found_id]->value = object.value;
 
         // TODO: copy values from node to *this.
@@ -241,7 +532,19 @@ bool Node::add(const Node& node)
 
 void Node::clone(const Node& origin, Node& destination)
 {
-    
+}
+
+char* Node::duplicateCharTable(const char* key)
+{
+    long newSize = 0;
+    while (key[newSize] != '\0') newSize++;
+    newSize += 1;
+
+    char* newTable = new char[newSize];
+    for(long i = 0; i < newSize; i++) {
+        newTable[i] = key[i];
+    }
+    return newTable;
 }
 
 Node::Node()
@@ -293,3 +596,4 @@ Json::Json()
 Json::~Json()
 {
 }
+*/

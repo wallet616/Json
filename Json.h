@@ -1,6 +1,9 @@
 #ifndef JSON_H
 #define JSON_H
 
+//
+// Structures
+//
 struct Json_char {
     char* key;
     char* value;
@@ -16,6 +19,65 @@ struct Json_bool {
     bool value;
 };
 
+//
+// Node
+//
+class Node
+{
+public:
+    enum data_type {
+        NOT_EXIST,
+
+        NODE,
+        CHAR,
+        LONG,
+        BOOL
+    };
+
+private:
+    char* key;
+
+    long json_char_ammount;
+    Json_char** json_char_list;
+
+    long json_long_ammount;
+    Json_long** json_long_list;
+
+    long json_bool_ammount;
+    Json_bool** json_bool_list;
+
+protected:
+    static char* charDuplicate(const char* key);
+    static bool charIsEqual(const char* keyOne, const char* keyTwo);
+    static bool charIsGreater(const char* keyOne, const char* keyTwo);
+
+public:
+    enum data_type findKey(const char* key, long& assigns_id_from_table) const;
+
+    char* getChar(const char* key) const;
+    long getLong(const char* key) const;
+    bool getBool(const char* key) const;
+
+    bool add(const Json_char& object);
+    bool add(const Json_long& object);
+    bool add(const Json_bool& object);
+
+public:
+    Node();
+    Node(const char* key);
+    ~Node();
+};
+
+class NodeTest : public Node
+{
+public:
+    void run_test();
+};
+
+/*
+//
+// Node
+//
 class Node
 {
 private:
@@ -54,9 +116,11 @@ public:
     bool add(const Json_long& object);
     bool add(const Json_bool& object);
     bool add(const Node& node);
-    
+
 protected:
     static void clone(const Node& origin, Node& destination);
+
+    static char* duplicateCharTable(const char* key);
 
 public:
     Node();
@@ -65,12 +129,23 @@ public:
     friend class Json;
 };
 
+class NodeTest : public Node {
+
+};
+
+//
+// Json
+//
 class Json
 {
 private:
 public:
+
+
+public:
     Json();
     ~Json();
 };
+*/
 
 #endif // JSON_H
