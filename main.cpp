@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <iostream>
 #include "Json.h"
 
@@ -8,10 +7,7 @@ int main(int argc, char** argv)
 {
     NodeTest node_test;
     node_test.run_test();
-    
-    
-    
-    
+
     /*
     Node a, b;
 
@@ -37,6 +33,9 @@ int main(int argc, char** argv)
     cout << "key: " << a.findKey("aa", dad) << endl;
     cout << "key: " << dad << endl;
     */
+
+    // std::cout << "Press enter to continue ...";
+    // std::cin.get();
 
     return 0;
 }

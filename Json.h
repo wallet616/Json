@@ -48,6 +48,7 @@ private:
 
 protected:
     static char* charDuplicate(const char* key);
+    static char* charGetDynamic(const char charTable[]);
     static bool charIsEqual(const char* keyOne, const char* keyTwo);
     static bool charIsGreater(const char* keyOne, const char* keyTwo);
 
