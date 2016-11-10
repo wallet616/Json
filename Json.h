@@ -34,7 +34,7 @@ public:
         BOOL
     };
 
-private:
+public:
     char* key;
 
     long json_char_ammount;
@@ -54,11 +54,13 @@ protected:
 
 public:
     enum data_type findKey(const char* key, long& assigns_id_from_table) const;
+    bool keyIsVaild(const char* key) const;
 
     char* getChar(const char* key) const;
     long getLong(const char* key) const;
     bool getBool(const char* key) const;
-
+    
+    // Adding objects means making an copy of it.
     bool add(const Json_char& object);
     bool add(const Json_long& object);
     bool add(const Json_bool& object);
@@ -67,12 +69,6 @@ public:
     Node();
     Node(const char* key);
     ~Node();
-};
-
-class NodeTest : public Node
-{
-public:
-    void run_test();
 };
 
 /*

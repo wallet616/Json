@@ -11,9 +11,11 @@
     <File Name="main.cpp"/>
     <VirtualDirectory Name="headers">
       <File Name="Json.h"/>
+      <File Name="JsonTest.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="source">
       <File Name="Json.cpp"/>
+      <File Name="JsonTest.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>

@@ -6,7 +6,7 @@
 //
 Node::Node()
 {
-    this->key = charGetDynamic("");
+    this->key = charGetDynamic("/");
 
     this->json_char_ammount = 0;
     this->json_char_list = 0x0;
@@ -84,6 +84,78 @@ enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table)
     return NOT_EXIST;
 }
 
+bool Node::keyIsVaild(const char* key) const
+{
+    long c1 = 0;
+    while(key[c1] != '\0')
+        c1++;
+    
+    if (c1 < 1) {
+        return false;
+    }
+    
+    return true;
+}
+
+bool Node::add(const Json_char& object)
+{
+    if (!this->keyIsVaild(object.key)) {
+        std::cerr << "Error: add: Key " << object.key << " is invaild." << std::endl;
+        return false;
+    }
+    
+    long id;
+    Node::data_type type = this->findKey(object.key, id);
+
+    if(type == NOT_EXIST) {
+        // std::cout << "New JsonChar: " << std::endl;
+        long found_id = 0;
+        Json_char** new_json_char_list = new Json_char*[this->json_char_ammount + 1];
+        while(found_id < this->json_char_ammount) {
+            if(charIsGreater(object.key, this->json_char_list[found_id]->key)) {
+                new_json_char_list[found_id] = this->json_char_list[found_id];
+                found_id++;
+            } else
+                break;
+        }
+
+        new_json_char_list[found_id] = new Json_char();
+        new_json_char_list[found_id]->key = charDuplicate(object.key);
+        new_json_char_list[found_id]->value = charDuplicate(object.value);
+
+        // std::cout << "  added at: " << found_id << std::endl;
+        // std::cout << "  values: {" << new_json_char_list[found_id]->key << ", " <<
+        // new_json_char_list[found_id]->value << "}" << std::endl;
+
+        while(found_id < this->json_char_ammount) {
+            new_json_char_list[found_id + 1] = this->json_char_list[found_id];
+            found_id++;
+        }
+
+        delete[] this->json_char_list;
+        this->json_char_list = new_json_char_list;
+        // std::cout << "  new json_char_ammount: " << found_id + 1 << " : " << this->json_char_ammount + 1 <<
+        // std::endl;
+        this->json_char_ammount = found_id + 1;
+
+        return true;
+    } else if(type == CHAR) {
+        // std::cout << "Updated JsonChar: " << std::endl;
+        this->json_char_list[id]->key = charDuplicate(object.key);
+        this->json_char_list[id]->value = charDuplicate(object.value);
+
+        // std::cout << "  added at: " << id << std::endl;
+        // std::cout << "  values: {" << this->json_char_list[id]->key << ", " << this->json_char_list[id]->value << "}"
+        // << std::endl;
+
+        return true;
+    } else {
+        std::cerr << "Error: add: Key " << object.key << " holds another data type." << std::endl;
+
+        return false;
+    }
+}
+
 // Static char*
 char* Node::charDuplicate(const char* key)
 {
@@ -156,186 +228,6 @@ char* Node::charGetDynamic(const char charTable[])
     }
 
     return new_table;
-}
-
-//
-// Node test
-//
-void NodeTest::run_test()
-{
-    std::cout << "Node tests:" << std::endl;
-
-    /// Static char* tests:
-    std::cout << "> Static char* tests:" << std::endl;
-
-    std::cout << " * static char* charGetDynamic(const char charTable[]):" << std::endl;
-    {
-        long fails = 0;
-
-        char str1[] = "qwerty 123 ";
-        char str2[] = "";
-
-        char* str_t1 = charGetDynamic(str1);
-        char* str_t2 = charGetDynamic(str1);
-
-        long c1 = 0;
-        while(str1[c1] != '\0')
-            c1++;
-        long c2 = 0;
-        while(str_t1[c2] != '\0')
-            c2++;
-
-        if(c1 != c2)
-            fails++;
-        else
-            for(long i = 0; i < c1 + 1; i++)
-                if(str1[i] != str_t1[i])
-                    fails++;
-
-        if(&str_t1 == &str_t2)
-            fails++;
-
-        delete str_t1;
-        str_t1 = charGetDynamic(str2);
-
-        delete str_t2;
-        str_t2 = charGetDynamic(str2);
-
-        if(&str_t1 == &str_t2)
-            fails++;
-
-        delete str_t1;
-        delete str_t2;
-
-        if(fails == 0)
-            std::cout << "      succes" << std::endl;
-        else
-            std::cout << "      failed" << std::endl;
-    }
-
-    std::cout << " * static char* charDuplicate(const char* key):" << std::endl;
-    {
-        long fails = 0;
-
-        char* str1 = charGetDynamic("qwert 123");
-        char* str2 = charGetDynamic("");
-        char* str3;
-
-        str3 = charDuplicate(str1);
-
-        long c1 = 0;
-        while(str3[c1] != '\0')
-            c1++;
-        long c2 = 0;
-        while(str3[c2] != '\0')
-            c2++;
-
-        if(c1 != c2)
-            fails++;
-        else
-            for(long i = 0; i < c1 + 1; i++)
-                if(str1[i] != str3[i])
-                    fails++;
-
-        delete str3;
-        str3 = charDuplicate(str1);
-        if(&str1 == &str3)
-            fails++;
-
-        delete str3;
-        str3 = charDuplicate(str2);
-        if(&str2 == &str3)
-            fails++;
-
-        delete str1;
-        delete str2;
-        delete str3;
-
-        if(fails == 0)
-            std::cout << "      succes" << std::endl;
-        else
-            std::cout << "      failed" << std::endl;
-    }
-
-    std::cout << " * static bool charIsEqual(const char* keyOne, const char* keyTwo):" << std::endl;
-    {
-        long fails = 0;
-
-        char* str1 = charGetDynamic("qwert 123");
-        char* str2 = charGetDynamic("");
-        char* str3;
-
-        if(charIsEqual(str1, str1) == false)
-            fails++;
-
-        if(charIsEqual(str2, str2) == false)
-            fails++;
-
-        if(charIsEqual(str1, str2) == true)
-            fails++;
-
-        str3 = charDuplicate(str1);
-        if(charIsEqual(str1, str3) == false)
-            fails++;
-
-        delete str3;
-        str3 = charDuplicate(str2);
-        if(charIsEqual(str3, str2) == false)
-            fails++;
-
-        delete str1;
-        delete str2;
-        delete str3;
-
-        if(fails == 0)
-            std::cout << "      succes" << std::endl;
-        else
-            std::cout << "      failed" << std::endl;
-    }
-
-    std::cout << " * static bool charIsGreater(const char* keyOne, const char* keyTwo):" << std::endl;
-    {
-        long fails = 0;
-
-        char* str1 = charGetDynamic("qwert 123");
-        char* str2 = charGetDynamic("qwert 123 ");
-        char* str3 = charGetDynamic("qWert 123 ");
-        char* str4 = charGetDynamic("");
-
-        if(charIsGreater(str1, str1) == true)
-            fails++;
-
-        if(charIsGreater(str4, str4) == true)
-            fails++;
-
-        if(charIsGreater(str1, str2) == true)
-            fails++;
-
-        if(charIsGreater(str2, str1) == false)
-            fails++;
-
-        if(charIsGreater(str1, str4) == false)
-            fails++;
-
-        if(charIsGreater(str4, str1) == true)
-            fails++;
-
-        if(charIsGreater(str2, str3) == false)
-            fails++;
-
-        if(charIsGreater(str3, str2) == true)
-            fails++;
-
-        delete str1;
-        delete str2;
-        delete str3;
-        delete str4;
-
-        if(fails == 0)
-            std::cout << "      succes" << std::endl;
-        else
-            std::cout << "      failed" << std::endl;
-    }
 }
 
 /*

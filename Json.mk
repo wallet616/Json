@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=wallet616
-Date                   :=09/11/2016
+Date                   :=10/11/2016
 CodeLitePath           :=D:/Programy/CodeLite
 LinkerName             :=C:/TDM-GCC-32/bin/g++.exe
 SharedObjectLinkerName :=C:/TDM-GCC-32/bin/g++.exe -shared -fPIC
@@ -62,7 +62,7 @@ AS       := C:/TDM-GCC-32/bin/as.exe
 ## User defined environment variables
 ##
 CodeLiteDir:=D:\Programy\CodeLite
-Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Json.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/Json.cpp$(ObjectSuffix) $(IntermediateDirectory)/JsonTest.cpp$(ObjectSuffix) 
 
 
 
@@ -108,6 +108,14 @@ $(IntermediateDirectory)/Json.cpp$(DependSuffix): Json.cpp
 
 $(IntermediateDirectory)/Json.cpp$(PreprocessSuffix): Json.cpp
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Json.cpp$(PreprocessSuffix)Json.cpp
+
+$(IntermediateDirectory)/JsonTest.cpp$(ObjectSuffix): JsonTest.cpp $(IntermediateDirectory)/JsonTest.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/WorkSpace/CodeLite/Json/JsonTest.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/JsonTest.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/JsonTest.cpp$(DependSuffix): JsonTest.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/JsonTest.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/JsonTest.cpp$(DependSuffix) -MM JsonTest.cpp
+
+$(IntermediateDirectory)/JsonTest.cpp$(PreprocessSuffix): JsonTest.cpp
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/JsonTest.cpp$(PreprocessSuffix)JsonTest.cpp
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
