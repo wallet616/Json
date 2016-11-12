@@ -20,11 +20,12 @@ int main(int argc, char** argv)
     a.add(Json_char({ "klucz0", "wartosc" }));
     a.add(Json_char({ "ka", "wartosc" }));
     a.add(Json_char({ "z", "wartosc" }));
-    a.add(Json_char({ "", "sfdg" }));
+    // a.add(Json_char({ "", "sfdg" }));
 
-    //for(long found_id = 0; found_id < a.json_char_ammount; found_id++) {
-    //std::cout << found_id << "# values: {" << a.json_char_list[found_id]->key << ", " << a.json_char_list[found_id]->value << "}" << std::endl;
-    //}
+    for(long found_id = 0; found_id < a.json_char_ammount; found_id++) {
+        std::cout << found_id << "# values: {" << a.json_char_list[found_id]->key << ", "
+                  << a.json_char_list[found_id]->value << "}" << std::endl;
+    }
 
     /*
     Node a, b;

@@ -34,7 +34,7 @@ public:
         BOOL
     };
 
-public:
+public: // TODO: change to protected.
     char* key;
 
     long json_char_ammount;
@@ -54,7 +54,7 @@ protected:
 
 public:
     enum data_type findKey(const char* key, long& assigns_id_from_table) const;
-    bool keyIsVaild(const char* key) const;
+    bool keyIsVaild(const char* key) const; // This should be in Json class i think.
 
     char* getChar(const char* key) const;
     long getLong(const char* key) const;

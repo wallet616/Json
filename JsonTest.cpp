@@ -181,7 +181,25 @@ void NodeTest::run_test()
             std::cout << "  - failed" << std::endl;
     }
 
-    
     /// Node adding methods tests:
     std::cout << std::endl << "> Node adding methods tests:" << std::endl;
+
+    std::cout << " * bool keyIsVaild(const char* key) const:" << std::endl;
+    {
+        long fails = 0;
+
+        if(keyIsVaild(charGetDynamic("qwert 123")) == false)
+            fails++;
+
+        if(keyIsVaild(charGetDynamic("1")) == false)
+            fails++;
+
+        if(keyIsVaild(charGetDynamic("")) == true)
+            fails++;
+
+        if(fails == 0)
+            std::cout << "  - succes" << std::endl;
+        else
+            std::cout << "  - failed" << std::endl;
+    }
 }
