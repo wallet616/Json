@@ -89,21 +89,22 @@ bool Node::keyIsVaild(const char* key) const
     long c1 = 0;
     while(key[c1] != '\0')
         c1++;
-    
-    if (c1 < 1) {
+
+    if(c1 < 1) {
         return false;
     }
-    
+
     return true;
 }
 
 bool Node::add(const Json_char& object)
 {
-    if (!this->keyIsVaild(object.key)) {
-        std::cerr << "Error: add: Key " << object.key << " is invaild." << std::endl;
+    if(!this->keyIsVaild(object.key)) {
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " is invaild." << std::endl;
         return false;
     }
-    
+
     long id;
     Node::data_type type = this->findKey(object.key, id);
 
@@ -141,7 +142,7 @@ bool Node::add(const Json_char& object)
         return true;
     } else if(type == CHAR) {
         // std::cout << "Updated JsonChar: " << std::endl;
-        this->json_char_list[id]->key = charDuplicate(object.key);
+        // this->json_char_list[id]->key = charDuplicate(object.key);
         this->json_char_list[id]->value = charDuplicate(object.value);
 
         // std::cout << "  added at: " << id << std::endl;
@@ -150,7 +151,57 @@ bool Node::add(const Json_char& object)
 
         return true;
     } else {
-        std::cerr << "Error: add: Key " << object.key << " holds another data type." << std::endl;
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " holds another data type." << std::endl;
+
+        return false;
+    }
+}
+
+bool Node::add(const Json_long& object)
+{
+    if(!this->keyIsVaild(object.key)) {
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " is invaild." << std::endl;
+        return false;
+    }
+
+    long id;
+    Node::data_type type = this->findKey(object.key, id);
+
+    if(type == NOT_EXIST) {
+        long found_id = 0;
+        Json_long** new_json_long_list = new Json_long*[this->json_long_ammount + 1];
+        while(found_id < this->json_long_ammount) {
+            if(charIsGreater(object.key, this->json_long_list[found_id]->key)) {
+                new_json_long_list[found_id] = this->json_long_list[found_id];
+                found_id++;
+            } else
+                break;
+        }
+
+        new_json_long_list[found_id] = new Json_long();
+        new_json_long_list[found_id]->key = charDuplicate(object.key);
+        new_json_long_list[found_id]->value = object.value;
+
+        while(found_id < this->json_long_ammount) {
+            new_json_long_list[found_id + 1] = this->json_long_list[found_id];
+            found_id++;
+        }
+
+        delete[] this->json_long_list;
+        this->json_long_list = new_json_long_list;
+        this->json_long_ammount = found_id + 1;
+
+        return true;
+    } else if(type == LONG) {
+        // this->json_long_list[id]->key = charDuplicate(object.key);
+        this->json_long_list[id]->value = object.value;
+
+        return true;
+    } else {
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " holds another data type." << std::endl;
 
         return false;
     }
