@@ -2,9 +2,9 @@
 #include <iostream>
 
 //
-// Node
+// Json
 //
-Node::Node()
+Json::Json()
 {
     this->key = charGetDynamic("/");
 
@@ -18,7 +18,7 @@ Node::Node()
     this->json_bool_list = 0x0;
 }
 
-Node::Node(const char* key)
+Json::Json(const char* key)
 {
     this->key = charDuplicate(key);
 
@@ -32,7 +32,7 @@ Node::Node(const char* key)
     this->json_bool_list = 0x0;
 }
 
-Node::~Node()
+Json::~Json()
 {
     delete this->key;
 
@@ -53,13 +53,8 @@ Node::~Node()
 }
 
 // Methods
-enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table) const
+enum Json::data_type Json::findKey(const char* key, long& assigns_id_from_table) const
 {
-    if(charIsEqual(this->key, key)) {
-        assigns_id_from_table = -1;
-        return NODE;
-    }
-
     for(long i = 0; i < this->json_long_ammount; i++) {
         if(charIsEqual(key, this->json_long_list[i]->key)) {
             assigns_id_from_table = i;
@@ -84,7 +79,7 @@ enum Node::data_type Node::findKey(const char* key, long& assigns_id_from_table)
     return NOT_EXIST;
 }
 
-bool Node::keyIsVaild(const char* key) const
+bool Json::keyIsVaild(const char* key) const
 {
     long c1 = 0;
     while(key[c1] != '\0')
@@ -97,7 +92,7 @@ bool Node::keyIsVaild(const char* key) const
     return true;
 }
 
-bool Node::add(const Json_char& object)
+bool Json::add(const Json_char& object)
 {
     if(!this->keyIsVaild(object.key)) {
         // TODO: throw error instead of displaying message.
@@ -106,7 +101,7 @@ bool Node::add(const Json_char& object)
     }
 
     long id;
-    Node::data_type type = this->findKey(object.key, id);
+    Json::data_type type = this->findKey(object.key, id);
 
     if(type == NOT_EXIST) {
         // std::cout << "New JsonChar: " << std::endl;
@@ -158,7 +153,7 @@ bool Node::add(const Json_char& object)
     }
 }
 
-bool Node::add(const Json_long& object)
+bool Json::add(const Json_long& object)
 {
     if(!this->keyIsVaild(object.key)) {
         // TODO: throw error instead of displaying message.
@@ -167,7 +162,7 @@ bool Node::add(const Json_long& object)
     }
 
     long id;
-    Node::data_type type = this->findKey(object.key, id);
+    Json::data_type type = this->findKey(object.key, id);
 
     if(type == NOT_EXIST) {
         long found_id = 0;
@@ -207,8 +202,57 @@ bool Node::add(const Json_long& object)
     }
 }
 
+bool Json::add(const Json_bool& object)
+{
+    if(!this->keyIsVaild(object.key)) {
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " is invaild." << std::endl;
+        return false;
+    }
+
+    long id;
+    Json::data_type type = this->findKey(object.key, id);
+
+    if(type == NOT_EXIST) {
+        long found_id = 0;
+        Json_bool** new_json_bool_list = new Json_bool*[this->json_bool_ammount + 1];
+        while(found_id < this->json_bool_ammount) {
+            if(charIsGreater(object.key, this->json_bool_list[found_id]->key)) {
+                new_json_bool_list[found_id] = this->json_bool_list[found_id];
+                found_id++;
+            } else
+                break;
+        }
+
+        new_json_bool_list[found_id] = new Json_bool();
+        new_json_bool_list[found_id]->key = charDuplicate(object.key);
+        new_json_bool_list[found_id]->value = object.value;
+
+        while(found_id < this->json_bool_ammount) {
+            new_json_bool_list[found_id + 1] = this->json_bool_list[found_id];
+            found_id++;
+        }
+
+        delete[] this->json_bool_list;
+        this->json_bool_list = new_json_bool_list;
+        this->json_bool_ammount = found_id + 1;
+
+        return true;
+    } else if(type == BOOL) {
+        // this->json_bool_list[id]->key = charDuplicate(object.key);
+        this->json_bool_list[id]->value = object.value;
+
+        return true;
+    } else {
+        // TODO: throw error instead of displaying message.
+        // std::cerr << "Error: add: Key " << object.key << " holds another data type." << std::endl;
+
+        return false;
+    }
+}
+
 // Static char*
-char* Node::charDuplicate(const char* key)
+char* Json::charDuplicate(const char* key)
 {
     long newSize = 0;
     while(key[newSize] != '\0')
@@ -222,7 +266,7 @@ char* Node::charDuplicate(const char* key)
     return newTable;
 }
 
-bool Node::charIsEqual(const char* keyOne, const char* keyTwo)
+bool Json::charIsEqual(const char* keyOne, const char* keyTwo)
 {
     long c1 = 0;
     while(keyOne[c1] != '\0')
@@ -244,7 +288,7 @@ bool Node::charIsEqual(const char* keyOne, const char* keyTwo)
     return true;
 }
 
-bool Node::charIsGreater(const char* keyOne, const char* keyTwo)
+bool Json::charIsGreater(const char* keyOne, const char* keyTwo)
 {
     long c1 = 0;
     while(keyOne[c1] != '\0')
@@ -266,7 +310,7 @@ bool Node::charIsGreater(const char* keyOne, const char* keyTwo)
     return false;
 }
 
-char* Node::charGetDynamic(const char charTable[])
+char* Json::charGetDynamic(const char charTable[])
 {
     long c = 0;
     while(charTable[c] != '\0')

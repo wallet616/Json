@@ -2,9 +2,9 @@
 #define JSON_TEST_H
 
 //
-// NodeTest
+// JsonTest
 //
-class NodeTest : public Node
+class JsonTest : public Json
 {
 public:
     void run_test();

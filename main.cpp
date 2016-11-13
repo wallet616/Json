@@ -6,12 +6,12 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-    NodeTest node_test;
-    node_test.run_test();
+    JsonTest json_test;
+    json_test.run_test();
 
     cout << endl << endl;
 
-    Node a;
+    Json a;
     a.add(Json_char({ "klucz", "wartosc" }));
     a.add(Json_char({ "klucz", "nowe" }));
     a.add(Json_char({ "klucz3", "wartosc" }));

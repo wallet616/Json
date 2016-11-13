@@ -22,13 +22,12 @@ struct Json_bool {
 //
 // Node
 //
-class Node
+class Json
 {
 public:
     enum data_type {
         NOT_EXIST,
 
-        NODE,
         CHAR,
         LONG,
         BOOL
@@ -66,9 +65,9 @@ public:
     bool add(const Json_bool& object);
 
 public:
-    Node();
-    Node(const char* key);
-    ~Node();
+    Json();
+    Json(const char* key);
+    ~Json();
 };
 
 /*

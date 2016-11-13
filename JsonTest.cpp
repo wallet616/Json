@@ -3,11 +3,11 @@
 #include <iostream>
 
 //
-// Node test
+// Json test
 //
-void NodeTest::run_test()
+void JsonTest::run_test()
 {
-    std::cout << "Node tests:" << std::endl;
+    std::cout << "Json tests:" << std::endl;
 
     /// Static char* tests:
     std::cout << std::endl << "> Static char* tests:" << std::endl;
@@ -181,8 +181,8 @@ void NodeTest::run_test()
             std::cout << "  - failed" << std::endl;
     }
 
-    /// Node adding methods tests:
-    std::cout << std::endl << "> Node adding methods tests:" << std::endl;
+    /// Json adding methods tests:
+    std::cout << std::endl << "> Json adding methods tests:" << std::endl;
 
     std::cout << " * bool keyIsVaild(const char* key) const:" << std::endl;
     {
@@ -210,7 +210,7 @@ void NodeTest::run_test()
     {
         long fails = 0;
 
-        Node a;
+        Json a;
         a.add(Json_char({ "key", "default" }));
         a.add(Json_char({ "key1", "value" }));
         a.add(Json_char({ "key3", "not value" }));
@@ -267,16 +267,16 @@ void NodeTest::run_test()
     {
         long fails = 0;
 
-        Node a;
+        Json a;
         a.add(Json_long({ "", 123 }));
         a.add(Json_long({ "long1", 123 }));
         a.add(Json_long({ "long0", 456 }));
         a.add(Json_long({ "lo", 25 }));
         a.add(Json_long({ "ng", 67 }));
 
-        // for(long found_id = 0; found_id < a.json_char_ammount; found_id++) {
-        //    std::cout << found_id << "# values: {" << a.json_char_list[found_id]->key << ", "
-        //              << a.json_char_list[found_id]->value << "}" << std::endl;
+        // for(long found_id = 0; found_id < a.json_long_ammount; found_id++) {
+        //    std::cout << found_id << "# values: {" << a.json_long_list[found_id]->key << ", "
+        //              << a.json_long_list[found_id]->value << "}" << std::endl;
         // }
 
         // Output shoudl resoult with:
@@ -294,6 +294,46 @@ void NodeTest::run_test()
         if(charIsEqual(a.json_long_list[3]->key, charGetDynamic("ng")) == false)
             fails++;
         if(a.json_long_list[3]->value != 67)
+            fails++;
+
+        if(fails == 0)
+            std::cout << "  - succes" << std::endl;
+        else
+            std::cout << "  - failed" << std::endl;
+    }
+    
+    std::cout << " * bool add(const Json_bool& object):" << std::endl;
+    {
+        long fails = 0;
+
+        Json a;
+        a.add(Json_bool({ "", 0 }));
+        a.add(Json_bool({ "bool1", 1 }));
+        a.add(Json_bool({ "bool0", 0 }));
+        a.add(Json_bool({ "bo", true }));
+        a.add(Json_bool({ "ol", false }));
+
+        // for(long found_id = 0; found_id < a.json_bool_ammount; found_id++) {
+        //    std::cout << found_id << "# values: {" << a.json_bool_list[found_id]->key << ", "
+        //              << a.json_bool_list[found_id]->value << "}" << std::endl;
+        // }
+
+        // Output shoudl resoult with:
+        // 0# values: {bo, 1}
+        // 1# values: {bool0, 0}
+        // 2# values: {bool1, 1}
+        // 3# values: {ol, 0}
+        // { "", 0 } is not added because of invalid key.
+
+        if(charIsEqual(a.json_bool_list[0]->key, charGetDynamic("bo")) == false)
+            fails++;
+        if(a.json_bool_list[0]->value != 1)
+            fails++;
+            
+
+        if(charIsEqual(a.json_bool_list[3]->key, charGetDynamic("ol")) == false)
+            fails++;
+        if(a.json_bool_list[3]->value != 0)
             fails++;
 
         if(fails == 0)
